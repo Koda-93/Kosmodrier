@@ -3,397 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kosmodrier - Chroniqueur du Plan</title>
+    <title>Kosmodrier Mobile Faneromundus</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        void: '#020617',
-                        gold: '#fbbf24',
-                        ether: '#7dd3fc',
-                        mezo: '#10b981', 
-                        lune: '#cbd5e1',
-                    },
-                    fontFamily: {
-                        kosmo: ['Orbitron', 'sans-serif'],
-                        data: ['Rajdhani', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,600;1,600&family=Rajdhani:wght@300;500;700&display=swap');
         
         :root {
-            --bg-current: #020617;
-            --accent-current: #fbbf24;
-            --glow-intensity: 1;
-            --opacity-focus: 0.9;
+            --bg-deep: #050a14;
+            --gold-fanero: #c5a021;
+            --blue-fanero: #4ea8de;
         }
 
         body {
-            background-color: var(--bg-current);
-            color: #e2e8f0;
+            background-color: var(--bg-deep);
+            color: #ffffff;
             font-family: 'Rajdhani', sans-serif;
             margin: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            transition: background-color 0.8s ease;
-            overflow: hidden;
+            padding: 0;
+            overflow-x: hidden;
         }
 
-        .kosmo-title { font-family: 'Orbitron', sans-serif; letter-spacing: 0.1em; }
-
+        .serif-title { font-family: 'Cormorant Garamond', serif; font-weight: 600; text-transform: uppercase; }
+        .handwritten { font-family: 'Great Vibes', cursive; color: #7dd3fc; }
+        .sketch-font { font-family: 'Cinzel', serif; font-weight: 700; letter-spacing: -2px; }
+        
         .glass-panel {
-            background: rgba(15, 23, 42, 0.4);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            position: relative;
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.9), rgba(5, 10, 20, 1));
+            border: 1px solid rgba(197, 160, 33, 0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        .resonance-core {
-            filter: drop-shadow(0 0 calc(20px * var(--glow-intensity)) var(--accent-current));
-            transition: filter 0.3s ease;
-            opacity: var(--opacity-focus);
+        .fanero-glow {
+            text-shadow: 0 0 15px rgba(197, 160, 33, 0.5);
         }
 
-        .counter-box {
-            background: rgba(30, 41, 59, 0.2);
-            border-radius: 20px;
-            padding: 1.5rem 1rem;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            min-height: 110px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+        .btn-active-real {
+            background: rgba(197, 160, 33, 0.15);
+            border: 1px solid var(--gold-fanero);
+            color: var(--gold-fanero);
         }
 
-        .counter-box:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: var(--accent-current);
-        }
-
-        .dynamic-accent-text { color: var(--accent-current); transition: color 0.5s ease; }
-        .dynamic-accent-border { border-color: var(--accent-current); transition: border-color 0.5s ease; }
-        
-        .glow-text { text-shadow: 0 0 calc(15px * var(--glow-intensity)) var(--accent-current); }
-
-        .selector-container {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 999px;
-            padding: 4px;
-            display: flex;
-            gap: 4px;
-        }
-
-        .btn-switch {
-            cursor: pointer;
-            padding: 0.8rem 2rem;
-            border-radius: 99px;
-            font-size: 0.75rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-            color: rgba(255, 255, 255, 0.3);
-            border: 1px solid transparent;
-            font-family: 'Orbitron', sans-serif;
-        }
-
-        .btn-active {
-            background: #e2e8f0; 
-            color: #020617;
-            box-shadow: 0 0 30px rgba(226, 232, 240, 0.2);
-        }
-        
-        #btn-fareno.btn-active { background: #7dd3fc; box-shadow: 0 0 30px rgba(125, 211, 252, 0.3); }
-        #btn-mezo.btn-active { background: #10b981; box-shadow: 0 0 30px rgba(16, 185, 129, 0.3); }
-
-        .orb-bg {
-            position: absolute;
-            width: 500px;
-            height: 500px;
-            background: var(--accent-current);
-            filter: blur(180px);
-            opacity: calc(0.08 * var(--glow-intensity));
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: -1;
-            animation: move 20s infinite alternate ease-in-out;
-        }
-
-        @keyframes move {
-            from { transform: translate(-20%, -20%); }
-            to { transform: translate(20%, 20%); }
+        .btn-active-fareno {
+            background: rgba(78, 168, 222, 0.15);
+            border: 1px solid var(--blue-fanero);
+            color: var(--blue-fanero);
         }
     </style>
 </head>
-<body class="antialiased">
+<body class="p-4 flex flex-col min-h-screen">
 
-    <div class="orb-bg"></div>
+    <!-- Logo & Header Style Faneromundus -->
+    <div class="text-center mb-6">
+        <h1 class="serif-title text-2xl tracking-[0.3em] mb-1">FANEROMUNDUS<span class="text-[0.6rem] align-top">TM</span></h1>
+        <div class="text-[0.6rem] tracking-[0.5em] opacity-80 uppercase">Éveil Élémentaire</div>
+    </div>
 
-    <div class="w-full max-w-6xl p-6 flex flex-col gap-6 relative z-10">
+    <!-- Section Infos Temps (Capture 2) -->
+    <div class="flex justify-between items-end border-b border-white/20 pb-2 mb-6">
+        <div class="handwritten text-3xl transform -rotate-6" id="season-label">Hiver</div>
+        <div class="flex items-baseline gap-2">
+            <span class="text-5xl font-bold" id="day-num">23</span>
+            <div class="text-left">
+                <div class="text-[0.7rem] uppercase leading-none opacity-60" id="day-name-small">Févr.</div>
+                <div class="text-sm font-bold serif-title leading-tight" id="day-name-real">Lundi</div>
+            </div>
+        </div>
+        <div class="text-right">
+            <div class="flex items-baseline gap-1">
+                <span class="text-4xl font-bold" id="cycle-num">4</span>
+                <span class="serif-title text-xl tracking-widest" id="cycle-name">POISSONS</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rayon Style Croquis (Capture 2 haut droite) -->
+    <div class="absolute right-6 top-32">
+        <div class="sketch-font text-5xl opacity-40 italic" style="color: #475569;" id="val-rayon-sketch">5325</div>
+    </div>
+
+    <!-- Centre d'affichage (Capture 1) -->
+    <div id="display-center" class="w-full glass-panel aspect-[16/9] rounded-xl flex flex-col items-center justify-center relative my-8">
+        <div class="absolute top-2 left-4 text-[0.5rem] tracking-[0.4em] opacity-40 serif-title">TRAME DE FLUX</div>
         
-        <header class="flex flex-col md:flex-row justify-between items-center border-b border-white/5 pb-8">
-            <div class="text-center md:text-left">
-                <h1 class="kosmo-title font-bold text-white uppercase tracking-tighter">
-                    <span id="plan-label-mini" class="text-[0.6rem] block opacity-40 mb-2 font-bold tracking-[0.3em]">SYNCHRONISATION</span>
-                    <span class="text-3xl md:text-4xl flex items-baseline gap-3 uppercase font-black">
-                        KOSMODRIER <span id="val-rayon-title" class="dynamic-accent-text glow-text opacity-90 text-2xl md:text-3xl">--</span>
-                    </span>
-                </h1>
-            </div>
-            
-            <div class="selector-container mt-6 md:mt-0">
-                <button id="btn-real" onclick="switchPlan('real')" class="btn-switch btn-active">Réel</button>
-                <button id="btn-fareno" onclick="switchPlan('fareno')" class="btn-switch">Fareno (x9)</button>
-                <button id="btn-mezo" onclick="switchPlan('mezomundus')" class="btn-switch">Mezomundus (x12)</button>
-            </div>
-        </header>
+        <div id="sigle-main" class="serif-title text-8xl fanero-glow" style="color: var(--gold-fanero);">LUN</div>
+        <div id="day-full" class="serif-title text-xs tracking-[0.4em] mt-4 opacity-90">LUNDI</div>
+    </div>
 
-        <main class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-            <!-- Colonne Gauche -->
-            <div class="lg:col-span-7 flex flex-col gap-4">
-                <div class="glass-panel aspect-square md:aspect-video rounded-[3rem] flex flex-col items-center justify-center relative overflow-hidden group">
-                    <div id="type-label" class="absolute top-10 text-[0.6rem] text-white/20 kosmo-title uppercase tracking-[0.5em] font-bold">--</div>
-                    
-                    <div class="flex flex-col items-center resonance-core">
-                        <div id="sigle-main" class="text-7xl md:text-9xl font-bold dynamic-accent-text kosmo-title leading-none glow-text text-center uppercase tracking-tighter">--</div>
-                        <div id="label-sub" class="text-sm md:text-lg uppercase tracking-[0.8em] text-white/30 mt-6 font-bold">--</div>
-                        <div id="val-saison" class="text-[0.6rem] md:text-xs kosmo-title uppercase tracking-[0.6em] dynamic-accent-text mt-8 font-black opacity-60">--</div>
-                    </div>
+    <!-- Compteurs Techniques -->
+    <div class="grid grid-cols-3 gap-2 mb-8">
+        <div class="bg-white/5 p-2 rounded text-center border-b border-white/10">
+            <div class="text-[0.5rem] uppercase opacity-50 mb-1">Onde</div>
+            <div id="val-onde" class="text-xl font-medium">--</div>
+        </div>
+        <div class="bg-white/5 p-2 rounded text-center border-b border-white/10">
+            <div class="text-[0.5rem] uppercase opacity-50 mb-1">Impulsion</div>
+            <div id="val-impulsion" class="text-xl font-medium">--</div>
+        </div>
+        <div class="bg-white/5 p-2 rounded text-center border-b border-white/10">
+            <div class="text-[0.5rem] uppercase opacity-50 mb-1">Battement</div>
+            <div id="val-battement" class="text-xl font-medium text-blue-400">--</div>
+        </div>
+    </div>
 
-                    <div class="absolute bottom-10 w-full px-20 flex flex-col items-center gap-3">
-                        <div class="flex justify-between w-full text-[0.5rem] uppercase tracking-widest text-white/20 font-bold">
-                            <span>Origine</span>
-                            <span id="flux-percent">0%</span>
-                            <span>Achevé</span>
-                        </div>
-                        <div class="h-[2px] w-full bg-white/5 rounded-full overflow-hidden">
-                            <div id="resonance-bar" class="h-full bg-current dynamic-accent-text transition-all duration-500 shadow-[0_0_10px_currentcolor]"></div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Nouvelle zone de date sous le bloc central -->
-                <div class="px-8 flex justify-between items-center opacity-60">
-                    <div id="full-date-display" class="text-xs kosmo-title uppercase tracking-[0.3em] font-bold text-white/80">
-                        DATE : -- / -- / --
-                    </div>
-                    <div class="text-[0.6rem] opacity-30 uppercase tracking-widest font-bold">Résonance Active</div>
-                </div>
-            </div>
-
-            <!-- Colonne Droite -->
-            <div class="lg:col-span-5 flex flex-col gap-4">
-                <div class="counter-box dynamic-accent-border border-b-4 bg-white/[0.03]">
-                    <span id="label-rayon" class="block text-[0.65rem] text-gray-500 kosmo-title mb-3 uppercase tracking-[0.2em] font-bold">Rayon</span>
-                    <div id="val-rayon" class="text-6xl font-black text-white tracking-tighter">--</div>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="counter-box flex flex-col justify-center py-8">
-                        <span id="label-cycle" class="block text-[0.65rem] text-gray-500 kosmo-title mb-3 uppercase tracking-[0.2em] font-bold">Cycle</span>
-                        <div id="val-cycle" class="text-2xl font-bold text-white uppercase tracking-widest leading-none">--</div>
-                    </div>
-                    <div id="side-unit-box" class="counter-box flex flex-col justify-center py-8 dynamic-accent-border border-t-2">
-                        <span id="label-side-unit" class="block text-[0.65rem] text-gray-500 kosmo-title mb-3 uppercase tracking-[0.2em] font-bold">Jour Solaire</span>
-                        <div id="val-side-unit" class="text-4xl font-black text-white uppercase tracking-tighter">--</div>
-                    </div>
-                </div>
-
-                <div id="stats-grid" class="grid grid-cols-3 gap-3">
-                    <div id="c1" class="counter-box">
-                        <span id="u1-label" class="text-[0.55rem] text-gray-500 uppercase mb-2 font-bold tracking-tighter">--</span>
-                        <span id="u1-val" class="text-2xl font-black text-white font-mono">--</span>
-                    </div>
-                    <div id="c2" class="counter-box">
-                        <span id="u2-label" class="text-[0.55rem] text-gray-500 uppercase mb-2 font-bold tracking-tighter">--</span>
-                        <span id="u2-val" class="text-2xl font-black text-white font-mono">--</span>
-                    </div>
-                    <div id="c3" class="counter-box">
-                        <span id="u3-label" class="text-[0.55rem] text-gray-500 uppercase mb-2 font-bold tracking-tighter">--</span>
-                        <span id="u3-val" class="text-2xl font-black text-white font-mono">--</span>
-                    </div>
-                </div>
-
-                <div class="mt-auto p-5 glass-panel rounded-2xl flex items-center justify-between">
-                    <div>
-                        <span id="sync-status" class="text-[0.6rem] kosmo-title uppercase tracking-[0.2em] font-bold opacity-60">--</span>
-                        <div id="timestamp-utc" class="text-[0.5rem] opacity-30 font-mono mt-1">UTC-SYNC ACTIVE</div>
-                    </div>
-                    <div class="flex gap-1">
-                        <div class="w-1.5 h-1.5 rounded-full dynamic-accent-text bg-current animate-ping"></div>
-                        <div class="w-1.5 h-1.5 rounded-full dynamic-accent-text bg-current opacity-50"></div>
-                    </div>
-                </div>
-            </div>
-        </main>
+    <!-- Contrôles du Plan -->
+    <div class="mt-auto grid grid-cols-2 gap-4 pb-4">
+        <button onclick="setPlan('real')" id="btn-real" class="py-4 rounded-full serif-title text-[0.7rem] tracking-widest transition-all btn-active-real">Plan Matériel</button>
+        <button onclick="setPlan('universe')" id="btn-universe" class="py-4 rounded-full serif-title text-[0.7rem] tracking-widest transition-all opacity-40">Plan Fareno</button>
     </div>
 
     <script>
         let currentPlan = 'real';
+        
+        const fullDaysReal = { 0: "DIMANCHE", 1: "LUNDI", 2: "MARDI", 3: "MERCREDI", 4: "JEUDI", 5: "VENDREDI", 6: "SAMEDI" };
+        const shortDaysReal = { 0: "DIM", 1: "LUN", 2: "MAR", 3: "MER", 4: "JEU", 5: "VEN", 6: "SAM" };
+        const monthsReal = ["Janv.", "Févr.", "Mars", "Avril", "Mai", "Juin", "Juil.", "Août", "Sept.", "Oct.", "Nov.", "Déc."];
+        
+        const faneroSigles = ["ARBMONDE", "FONS", "FEUSOL", "OPPO", "OEILESPI", "CREA", "FLUXAM"];
+        const faneroSiglesShort = ["ARB", "FON", "FEU", "OPP", "OEI", "CRE", "FLU"];
+        const faneroCycles = ["Terra", "Flos", "Germen", "Ignis", "Solis", "Fructus", "Aer", "Ventus", "Messis", "Aqua", "Requiem", "Frigus"];
 
-        const realAstro = {
-            1: { a: "LUNE", f: "LUNDI", color: "#cbd5e1", glow: 0.4, opacity: 0.7 },
-            2: { a: "MARS", f: "MARDI", color: "#ef4444", glow: 1.2, opacity: 1 },
-            3: { a: "MERCURE", f: "MERCREDI", color: "#fbbf24", glow: 1, opacity: 0.9 },
-            4: { a: "JUPITER", f: "JEUDI", color: "#a855f7", glow: 1.1, opacity: 1 },
-            5: { a: "VENUS", f: "VENDREDI", color: "#f472b6", glow: 1.3, opacity: 1 },
-            6: { a: "SATURNE", f: "SAMEDI", color: "#64748b", glow: 0.8, opacity: 0.85 },
-            0: { a: "SOLEIL", f: "DIMANCHE", color: "#f59e0b", glow: 1.5, opacity: 1 }
-        };
+        function setPlan(plan) {
+            currentPlan = plan;
+            const btnReal = document.getElementById('btn-real');
+            const btnUniv = document.getElementById('btn-universe');
+            const sigleMain = document.getElementById('sigle-main');
 
-        const commonCycles = ["Terra", "Flos", "Germen", "Ignis", "Solis", "Fructus", "Aer", "Ventus", "Messis", "Aqua", "Requiem", "Frigus"];
-        const commonSaisons = ["Terture", "Foyture", "Airition", "Oflux"];
-        const commonTrameNames = ["ARBMONDE", "FONS", "FEUSOL", "OPPO", "OEILESPI", "CREA", "FLUXAM"];
-
-        function switchPlan(p) {
-            currentPlan = p;
-            const root = document.documentElement;
-            const bReal = document.getElementById('btn-real');
-            const bFareno = document.getElementById('btn-fareno');
-            const bMezo = document.getElementById('btn-mezo');
-
-            [bReal, bFareno, bMezo].forEach(b => b.classList.remove('btn-active'));
-
-            if (p === 'real') {
-                bReal.classList.add('btn-active');
-                updateLabels("Archives Matérielles", "PLAN RÉEL", "Rayon de l'Écriture", "Mois Solaire", "JOUR SOLAIRE", "Heure", "Min.", "Sec.");
-            } else if (p === 'fareno') {
-                root.style.setProperty('--accent-current', '#7dd3fc');
-                root.style.setProperty('--bg-current', '#0c0a09');
-                bFareno.classList.add('btn-active');
-                updateLabels("Chronique de l'Éther", "PLAN FARENO (x9)", "Rayon", "Cycle Fareno", "Flux Actuel", "Onde", "Puls.", "Batt.");
-            } else if (p === 'mezomundus') {
-                root.style.setProperty('--accent-current', '#10b981');
-                root.style.setProperty('--bg-current', '#061712');
-                bMezo.classList.add('btn-active');
-                updateLabels("Chronique Médiane", "PLAN MEZOMUNDUS (x12)", "Rayon Mezo", "Cycle Mezo", "Flux Actuel", "Onde", "Puls.", "Batt.");
+            if(plan === 'real') {
+                btnReal.className = "py-4 rounded-full serif-title text-[0.7rem] tracking-widest transition-all btn-active-real";
+                btnUniv.className = "py-4 rounded-full serif-title text-[0.7rem] tracking-widest transition-all opacity-40";
+                sigleMain.style.color = "var(--gold-fanero)";
+                sigleMain.style.textShadow = "0 0 15px rgba(197, 160, 33, 0.5)";
+            } else {
+                btnUniv.className = "py-4 rounded-full serif-title text-[0.7rem] tracking-widest transition-all btn-active-fareno";
+                btnReal.className = "py-4 rounded-full serif-title text-[0.7rem] tracking-widest transition-all opacity-40";
+                sigleMain.style.color = "var(--blue-fanero)";
+                sigleMain.style.textShadow = "0 0 15px rgba(78, 168, 222, 0.5)";
             }
-            update();
+            updateTime();
         }
 
-        function updateLabels(mini, type, rayon, cycle, side, u1, u2, u3) {
-            document.getElementById('plan-label-mini').innerText = mini;
-            document.getElementById('type-label').innerText = type;
-            document.getElementById('label-rayon').innerText = rayon;
-            document.getElementById('label-cycle').innerText = cycle;
-            document.getElementById('label-side-unit').innerText = side;
-            document.getElementById('u1-label').innerText = u1;
-            document.getElementById('u2-label').innerText = u2;
-            document.getElementById('u3-label').innerText = u3;
-        }
-
-        function update() {
-            const root = document.documentElement;
+        function updateTime() {
             const now = new Date();
-            const startPoint = new Date(2025, 2, 21, 0, 0, 0).getTime();
-            const diffMs = now.getTime() - startPoint;
-            const totalSec = Math.floor(diffMs / 1000);
-            
-            if (currentPlan === 'real') {
-                const dayConfig = realAstro[now.getDay()];
-                root.style.setProperty('--accent-current', dayConfig.color);
-                root.style.setProperty('--bg-current', '#020617');
-                root.style.setProperty('--opacity-focus', dayConfig.opacity);
-                
-                const resonance = dayConfig.glow * (1 + (Math.sin(Date.now() / 1200) * 0.05));
-                root.style.setProperty('--glow-intensity', resonance);
+            const secTotalFanero = Math.floor((Date.now() - Date.UTC(2025, 5, 21, 0, 0, 0)) / 1000);
 
-                const h = now.getHours();
-                const m = now.getMinutes();
-                const s = now.getSeconds();
-                
-                const currentYear = now.getFullYear();
-                let equinoxe = new Date(currentYear, 2, 21);
-                if (now < equinoxe) equinoxe = new Date(currentYear - 1, 2, 21);
-                
-                const diffDays = Math.floor((now - equinoxe) / 86400000);
-                let moisIdx, jourDansMois;
-                if (diffDays < 186) {
-                    moisIdx = Math.floor(diffDays / 31);
-                    jourDansMois = (diffDays % 31) + 1;
-                } else {
-                    const reste = diffDays - 186;
-                    moisIdx = 6 + Math.floor(reste / 30);
-                    jourDansMois = (reste % 30) + 1;
-                }
-                
-                const moisNoms = ["Bélier", "Taureau", "Gémeaux", "Crabe", "Lion", "Vierge", "Balance", "Scorpion", "Sagittaire", "Capricorne", "Verseaux", "Poissons"];
-                const rayonVal = equinoxe.getFullYear() + 3300;
+            // Update Header (Common for both or specialized)
+            document.getElementById('day-num').innerText = now.getDate();
+            document.getElementById('day-name-small').innerText = monthsReal[now.getMonth()];
+            document.getElementById('day-name-real').innerText = fullDaysReal[now.getDay()];
 
-                document.getElementById('sigle-main').innerText = dayConfig.a;
-                document.getElementById('label-sub').innerText = dayConfig.f;
-                document.getElementById('val-rayon-title').innerText = rayonVal;
-                document.getElementById('val-rayon').innerText = rayonVal;
-                document.getElementById('val-cycle').innerText = moisNoms[moisIdx % 12];
-                document.getElementById('val-side-unit').innerText = String(jourDansMois).padStart(2, '0');
-                document.getElementById('val-saison').innerText = ["Printemps", "Été", "Automne", "Hiver"][Math.floor((moisIdx % 12) / 3)];
+            if(currentPlan === 'real') {
+                const wdIdx = now.getDay();
+                const switchDate = new Date(2026, 2, 21);
+                let rayonReal = now >= switchDate ? 5326 : 5325;
                 
-                document.getElementById('u1-val').innerText = String(h).padStart(2, '0');
-                document.getElementById('u2-val').innerText = String(m).padStart(2, '0');
-                document.getElementById('u3-val').innerText = String(s).padStart(2, '0');
-
-                // Affichage Date sous bloc central
-                document.getElementById('full-date-display').innerText = `DATE : ${String(jourDansMois).padStart(2, '0')} / ${moisNoms[moisIdx % 12].toUpperCase()} / ${rayonVal}`;
-
-                const dayProgress = ((h*3600 + m*60 + s) / 86400) * 100;
-                document.getElementById('resonance-bar').style.width = dayProgress + '%';
-                document.getElementById('flux-percent').innerText = Math.floor(dayProgress) + '%';
-                document.getElementById('sync-status').innerText = "Ancrage Matériel";
+                document.getElementById('sigle-main').innerText = shortDaysReal[wdIdx];
+                document.getElementById('day-full').innerText = fullDaysReal[wdIdx];
+                document.getElementById('val-rayon-sketch').innerText = rayonReal;
+                document.getElementById('cycle-name').innerText = "POISSONS";
+                document.getElementById('cycle-num').innerText = "4"; // Placeholder matching capture
+                document.getElementById('season-label').innerText = "Hiver";
+                
+                document.getElementById('val-onde').innerText = String(now.getHours()).padStart(2, '0');
+                document.getElementById('val-impulsion').innerText = String(now.getMinutes()).padStart(2, '0');
+                document.getElementById('val-battement').innerText = String(now.getSeconds()).padStart(2, '0');
             } 
             else {
-                const base = (currentPlan === 'fareno') ? 9 : 12;
-                const resonance = 1 + (Math.sin(Date.now() / 800) * 0.15);
-                root.style.setProperty('--glow-intensity', resonance);
+                const n0 = secTotalFanero;
+                const batt = (n0 % 9) + 1;
+                const puls = (Math.floor(n0 / 9) % 9) + 1;
+                const onde = (Math.floor(n0 / 81) % 36) + 1;
+                const fluxInTrame = (Math.floor(n0 / 2916) % 7) + 1;
+                const cycleIdx = (Math.floor(n0 / 81648) % 12);
+                const rayonFanero = Math.floor(n0 / 979776) + 1;
 
-                const secPerOnde = base * base;
-                const secPerTrame = secPerOnde * 36;
-                const secPerCycle = secPerTrame * 28;
-                const secPerRayon = secPerCycle * 12;
-
-                const battVal = (totalSec % base) + 1;
-                const pulsVal = (Math.floor(totalSec / base) % base) + 1;
-                const ondeVal = (Math.floor(totalSec / secPerOnde) % 36) + 1;
-                const fluxVal = (Math.floor(totalSec / (secPerOnde * 36)) % 28) + 1; 
+                document.getElementById('sigle-main').innerText = faneroSiglesShort[fluxInTrame - 1];
+                document.getElementById('day-full').innerText = faneroSigles[fluxInTrame - 1];
+                document.getElementById('val-rayon-sketch').innerText = rayonFanero;
+                document.getElementById('cycle-name').innerText = faneroCycles[cycleIdx].toUpperCase();
+                document.getElementById('cycle-num').innerText = fluxInTrame;
                 
-                const trameAbs = Math.floor(totalSec / secPerTrame);
-                const cycleAbs = Math.floor(totalSec / secPerCycle);
-                const rayonNum = Math.floor(totalSec / secPerRayon) + 1;
+                const seasons = ["Terture", "Foyture", "Airition", "Oflux"];
+                document.getElementById('season-label').innerText = seasons[Math.floor(cycleIdx / 3)];
 
-                document.getElementById('sigle-main').innerText = commonTrameNames[trameAbs % 7];
-                document.getElementById('label-sub').innerText = "Trame " + (trameAbs + 1);
-                document.getElementById('val-rayon-title').innerText = rayonNum;
-                document.getElementById('val-rayon').innerText = rayonNum;
-                document.getElementById('val-cycle').innerText = commonCycles[cycleAbs % 12];
-                document.getElementById('val-side-unit').innerText = String(fluxVal).padStart(2, '0');
-                document.getElementById('val-saison').innerText = commonSaisons[Math.floor((cycleAbs % 12) / 3)];
-                
-                document.getElementById('u1-val').innerText = String(ondeVal).padStart(2, '0');
-                document.getElementById('u2-val').innerText = String(pulsVal).padStart(2, '0');
-                document.getElementById('u3-val').innerText = String(battVal).padStart(2, '0');
-                
-                // Affichage Date sous bloc central (Plan Non-Réel)
-                document.getElementById('full-date-display').innerText = `DATE : ${String(fluxVal).padStart(2, '0')} / ${commonCycles[cycleAbs % 12].toUpperCase()} / ${rayonNum}`;
-
-                const trameProgress = ((totalSec % secPerTrame) / secPerTrame) * 100;
-                document.getElementById('resonance-bar').style.width = trameProgress + '%';
-                document.getElementById('flux-percent').innerText = Math.floor(trameProgress) + '%';
-
-                document.getElementById('sync-status').innerText = (currentPlan === 'mezomundus') ? "Vibration Mezomundus x12" : "Oscillation Fareno x9";
+                document.getElementById('val-onde').innerText = String(onde).padStart(2, '0');
+                document.getElementById('val-impulsion').innerText = String(puls).padStart(2, '0');
+                document.getElementById('val-battement').innerText = String(batt).padStart(2, '0');
             }
         }
 
-        setInterval(update, 100); 
-        switchPlan('real');
+        setInterval(updateTime, 1000);
+        updateTime();
     </script>
 </body>
 </html>
