@@ -52,41 +52,41 @@
 </head>
 <body class="p-4 flex flex-col min-h-screen">
 
-    <!-- Logo & Header Style Faneromundus -->
+    <!-- Logo & Header -->
     <div class="text-center mb-6">
         <h1 class="serif-title text-2xl tracking-[0.3em] mb-1">FANEROMUNDUS<span class="text-[0.6rem] align-top">TM</span></h1>
         <div class="text-[0.6rem] tracking-[0.5em] opacity-80 uppercase">Éveil Élémentaire</div>
     </div>
 
-    <!-- Section Infos Temps (Capture 2) -->
+    <!-- Section Infos Temps (Synchronisation Solaire Hijri) -->
     <div class="flex justify-between items-end border-b border-white/20 pb-2 mb-6">
         <div class="handwritten text-3xl transform -rotate-6" id="season-label">Hiver</div>
         <div class="flex items-baseline gap-2">
-            <span class="text-5xl font-bold" id="day-num">23</span>
+            <span class="text-5xl font-bold" id="day-num">--</span>
             <div class="text-left">
-                <div class="text-[0.7rem] uppercase leading-none opacity-60" id="day-name-small">Févr.</div>
-                <div class="text-sm font-bold serif-title leading-tight" id="day-name-real">Lundi</div>
+                <div class="text-[0.7rem] uppercase leading-none opacity-60" id="day-name-small">--</div>
+                <div class="text-sm font-bold serif-title leading-tight" id="day-name-real">--</div>
             </div>
         </div>
         <div class="text-right">
             <div class="flex items-baseline gap-1">
-                <span class="text-4xl font-bold" id="cycle-num">4</span>
-                <span class="serif-title text-xl tracking-widest" id="cycle-name">POISSONS</span>
+                <span class="text-4xl font-bold" id="cycle-num">--</span>
+                <span class="serif-title text-xl tracking-widest" id="cycle-name">--</span>
             </div>
+            <div class="text-[0.5rem] uppercase tracking-widest opacity-40 serif-title" id="persian-sync-info">Sync. Perse</div>
         </div>
     </div>
 
-    <!-- Rayon Style Croquis (Capture 2 haut droite) -->
+    <!-- Rayon Style Croquis -->
     <div class="absolute right-6 top-32">
-        <div class="sketch-font text-5xl opacity-40 italic" style="color: #475569;" id="val-rayon-sketch">5325</div>
+        <div class="sketch-font text-5xl opacity-30 italic" style="color: #475569;" id="val-rayon-sketch">--</div>
     </div>
 
-    <!-- Centre d'affichage (Capture 1) -->
+    <!-- Centre d'affichage -->
     <div id="display-center" class="w-full glass-panel aspect-[16/9] rounded-xl flex flex-col items-center justify-center relative my-8">
         <div class="absolute top-2 left-4 text-[0.5rem] tracking-[0.4em] opacity-40 serif-title">TRAME DE FLUX</div>
-        
-        <div id="sigle-main" class="serif-title text-8xl fanero-glow" style="color: var(--gold-fanero);">LUN</div>
-        <div id="day-full" class="serif-title text-xs tracking-[0.4em] mt-4 opacity-90">LUNDI</div>
+        <div id="sigle-main" class="serif-title text-8xl fanero-glow" style="color: var(--gold-fanero);">--</div>
+        <div id="day-full" class="serif-title text-xs tracking-[0.4em] mt-4 opacity-90">--</div>
     </div>
 
     <!-- Compteurs Techniques -->
@@ -120,7 +120,45 @@
         
         const faneroSigles = ["ARBMONDE", "FONS", "FEUSOL", "OPPO", "OEILESPI", "CREA", "FLUXAM"];
         const faneroSiglesShort = ["ARB", "FON", "FEU", "OPP", "OEI", "CRE", "FLU"];
-        const faneroCycles = ["Terra", "Flos", "Germen", "Ignis", "Solis", "Fructus", "Aer", "Ventus", "Messis", "Aqua", "Requiem", "Frigus"];
+        
+        const zodiacCycles = [
+            "BÉLIER", "TAUREAU", "GÉMEAUX", "CANCER", "LION", "VIERGE",
+            "BALANCE", "SCORPION", "SAGITTAIRE", "CAPRICORNE", "VERSEAU", "POISSONS"
+        ];
+
+        // Conversion vers Calendrier Persan (Solaire Hijri)
+        function getPersianDate(date) {
+            let g_y = date.getFullYear();
+            let g_m = date.getMonth() + 1;
+            let g_d = date.getDate();
+            let gy = g_y - 1600;
+            let gm = g_m - 1;
+            let gd = g_d - 1;
+            let g_day_no = 365 * gy + Math.floor((gy + 3) / 4) - Math.floor((gy + 99) / 100) + Math.floor((gy + 399) / 400);
+            for (let i = 0; i < gm; ++i) g_day_no += [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][i];
+            if (gm > 1 && ((gy % 4 === 0 && gy % 100 !== 0) || (gy % 400 === 0))) g_day_no++;
+            g_day_no += gd;
+            let j_day_no = g_day_no - 79;
+            let j_np = Math.floor(j_day_no / 12053);
+            j_day_no %= 12053;
+            let jy = 979 + 33 * j_np + 4 * Math.floor(j_day_no / 1461);
+            j_day_no %= 1461;
+            if (j_day_no >= 366) {
+                jy += Math.floor((j_day_no - 1) / 365);
+                j_day_no = (j_day_no - 1) % 365;
+            }
+            let jm, jd;
+            const daysInMonths = [31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29];
+            for (let i = 0; i < 12; i++) {
+                if (j_day_no < daysInMonths[i]) {
+                    jm = i + 1;
+                    jd = j_day_no + 1;
+                    break;
+                }
+                j_day_no -= daysInMonths[i];
+            }
+            return { y: jy, m: jm, d: jd };
+        }
 
         function setPlan(plan) {
             currentPlan = plan;
@@ -132,21 +170,20 @@
                 btnReal.className = "py-4 rounded-full serif-title text-[0.7rem] tracking-widest transition-all btn-active-real";
                 btnUniv.className = "py-4 rounded-full serif-title text-[0.7rem] tracking-widest transition-all opacity-40";
                 sigleMain.style.color = "var(--gold-fanero)";
-                sigleMain.style.textShadow = "0 0 15px rgba(197, 160, 33, 0.5)";
             } else {
                 btnUniv.className = "py-4 rounded-full serif-title text-[0.7rem] tracking-widest transition-all btn-active-fareno";
                 btnReal.className = "py-4 rounded-full serif-title text-[0.7rem] tracking-widest transition-all opacity-40";
                 sigleMain.style.color = "var(--blue-fanero)";
-                sigleMain.style.textShadow = "0 0 15px rgba(78, 168, 222, 0.5)";
             }
             updateTime();
         }
 
         function updateTime() {
             const now = new Date();
+            const pDate = getPersianDate(now);
             const secTotalFanero = Math.floor((Date.now() - Date.UTC(2025, 5, 21, 0, 0, 0)) / 1000);
 
-            // Update Header (Common for both or specialized)
+            // Mise à jour Header Global
             document.getElementById('day-num').innerText = now.getDate();
             document.getElementById('day-name-small').innerText = monthsReal[now.getMonth()];
             document.getElementById('day-name-real').innerText = fullDaysReal[now.getDay()];
@@ -159,15 +196,22 @@
                 document.getElementById('sigle-main').innerText = shortDaysReal[wdIdx];
                 document.getElementById('day-full').innerText = fullDaysReal[wdIdx];
                 document.getElementById('val-rayon-sketch').innerText = rayonReal;
-                document.getElementById('cycle-name').innerText = "POISSONS";
-                document.getElementById('cycle-num').innerText = "4"; // Placeholder matching capture
-                document.getElementById('season-label').innerText = "Hiver";
+                
+                // SYNCHRONISATION : Le numéro du cycle est le jour du mois persan (jd)
+                // Le nom du cycle est le signe zodiacal correspondant au mois persan (jm)
+                document.getElementById('cycle-name').innerText = zodiacCycles[pDate.m - 1];
+                document.getElementById('cycle-num').innerText = pDate.d;
+                document.getElementById('persian-sync-info').innerText = "Sync. Esfand " + pDate.y;
+                
+                const isWinter = (pDate.m >= 10 || pDate.m <= 1);
+                document.getElementById('season-label').innerText = isWinter ? "Hiver" : "Printemps";
                 
                 document.getElementById('val-onde').innerText = String(now.getHours()).padStart(2, '0');
                 document.getElementById('val-impulsion').innerText = String(now.getMinutes()).padStart(2, '0');
                 document.getElementById('val-battement').innerText = String(now.getSeconds()).padStart(2, '0');
             } 
             else {
+                // Plan Fareno (Calculs ésotériques)
                 const n0 = secTotalFanero;
                 const batt = (n0 % 9) + 1;
                 const puls = (Math.floor(n0 / 9) % 9) + 1;
@@ -179,9 +223,10 @@
                 document.getElementById('sigle-main').innerText = faneroSiglesShort[fluxInTrame - 1];
                 document.getElementById('day-full').innerText = faneroSigles[fluxInTrame - 1];
                 document.getElementById('val-rayon-sketch').innerText = rayonFanero;
-                document.getElementById('cycle-name').innerText = faneroCycles[cycleIdx].toUpperCase();
+                document.getElementById('cycle-name').innerText = zodiacCycles[cycleIdx];
                 document.getElementById('cycle-num').innerText = fluxInTrame;
-                
+                document.getElementById('persian-sync-info').innerText = "Fareno Flux";
+
                 const seasons = ["Terture", "Foyture", "Airition", "Oflux"];
                 document.getElementById('season-label').innerText = seasons[Math.floor(cycleIdx / 3)];
 
