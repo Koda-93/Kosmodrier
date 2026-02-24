@@ -6,7 +6,7 @@
     <title>Kosmodrier Mobile Faneromundus</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Great+Vibes&family=Cormorant+SC:ital,wght@0,600;1,600&family=Rajdhani:wght@300;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Great+Vibes&family=Cormorant+SC:wght@600&family=Rajdhani:wght@300;500;700&display=swap');
         
         :root {
             --bg-deep: #050a14;
@@ -23,7 +23,7 @@
             overflow-x: hidden;
         }
 
-        .serif-title { font-family: 'Cormorant Garamond', serif; font-weight: 600; text-transform: uppercase; }
+        .serif-title { font-family: 'Cormorant SC', serif; font-weight: 600; text-transform: uppercase; }
         .handwritten { font-family: 'Great Vibes', cursive; color: #7dd3fc; }
         .sketch-font { font-family: 'Cinzel', serif; font-weight: 700; letter-spacing: -2px; }
         
@@ -58,32 +58,26 @@
         <div class="text-[0.6rem] tracking-[0.5em] opacity-80 uppercase">Éveil Élémentaire</div>
     </div>
 
-    <!-- Section Infos Temps (Synchronisation Solaire Hijri) -->
-    <div class="flex justify-between items-end border-b border-white/20 pb-2 mb-6">
-        <div class="handwritten text-3xl transform -rotate-6" id="season-label">Hiver</div>
-        <div class="flex items-baseline gap-2">
-            <span class="text-5xl font-bold" id="day-num">--</span>
-            <div class="text-left">
-                <div class="text-[0.7rem] uppercase leading-none opacity-60" id="day-name-small">--</div>
-                <div class="text-sm font-bold serif-title leading-tight" id="day-name-real">--</div>
-            </div>
-        </div>
+    <!-- Section Infos Temps (Uniquement Faneromundus / Sync Perse) -->
+    <div class="flex justify-between items-end border-b border-white/20 pb-4 mb-6 relative">
+        <div class="handwritten text-4xl transform -rotate-6" id="season-label">Hiver</div>
+        
         <div class="text-right">
-            <div class="flex items-baseline gap-1">
-                <span class="text-4xl font-bold" id="cycle-num">--</span>
-                <span class="serif-title text-xl tracking-widest" id="cycle-name">--</span>
+            <div class="flex items-baseline justify-end gap-2">
+                <span class="text-6xl font-bold leading-none" id="cycle-num">--</span>
+                <span class="serif-title text-2xl tracking-[0.2em]" id="cycle-name">--</span>
             </div>
-            <div class="text-[0.5rem] uppercase tracking-widest opacity-40 serif-title" id="persian-sync-info">Sync. Perse</div>
+            <div class="text-[0.6rem] uppercase tracking-widest opacity-40 serif-title mt-1" id="persian-sync-info">Sync. Perse</div>
         </div>
     </div>
 
-    <!-- Rayon Style Croquis -->
-    <div class="absolute right-6 top-32">
+    <!-- Rayon Style Croquis (Positionné un peu plus bas) -->
+    <div class="flex justify-end pr-2 -mt-2 mb-4">
         <div class="sketch-font text-5xl opacity-30 italic" style="color: #475569;" id="val-rayon-sketch">--</div>
     </div>
 
     <!-- Centre d'affichage -->
-    <div id="display-center" class="w-full glass-panel aspect-[16/9] rounded-xl flex flex-col items-center justify-center relative my-8">
+    <div id="display-center" class="w-full glass-panel aspect-[16/9] rounded-xl flex flex-col items-center justify-center relative my-4">
         <div class="absolute top-2 left-4 text-[0.5rem] tracking-[0.4em] opacity-40 serif-title">TRAME DE FLUX</div>
         <div id="sigle-main" class="serif-title text-8xl fanero-glow" style="color: var(--gold-fanero);">--</div>
         <div id="day-full" class="serif-title text-xs tracking-[0.4em] mt-4 opacity-90">--</div>
@@ -116,7 +110,6 @@
         
         const fullDaysReal = { 0: "DIMANCHE", 1: "LUNDI", 2: "MARDI", 3: "MERCREDI", 4: "JEUDI", 5: "VENDREDI", 6: "SAMEDI" };
         const shortDaysReal = { 0: "DIM", 1: "LUN", 2: "MAR", 3: "MER", 4: "JEU", 5: "VEN", 6: "SAM" };
-        const monthsReal = ["Janv.", "Févr.", "Mars", "Avril", "Mai", "Juin", "Juil.", "Août", "Sept.", "Oct.", "Nov.", "Déc."];
         
         const faneroSigles = ["ARBMONDE", "FONS", "FEUSOL", "OPPO", "OEILESPI", "CREA", "FLUXAM"];
         const faneroSiglesShort = ["ARB", "FON", "FEU", "OPP", "OEI", "CRE", "FLU"];
@@ -126,7 +119,6 @@
             "BALANCE", "SCORPION", "SAGITTAIRE", "CAPRICORNE", "VERSEAU", "POISSONS"
         ];
 
-        // Conversion vers Calendrier Persan (Solaire Hijri)
         function getPersianDate(date) {
             let g_y = date.getFullYear();
             let g_m = date.getMonth() + 1;
@@ -183,11 +175,6 @@
             const pDate = getPersianDate(now);
             const secTotalFanero = Math.floor((Date.now() - Date.UTC(2025, 5, 21, 0, 0, 0)) / 1000);
 
-            // Mise à jour Header Global
-            document.getElementById('day-num').innerText = now.getDate();
-            document.getElementById('day-name-small').innerText = monthsReal[now.getMonth()];
-            document.getElementById('day-name-real').innerText = fullDaysReal[now.getDay()];
-
             if(currentPlan === 'real') {
                 const wdIdx = now.getDay();
                 const switchDate = new Date(2026, 2, 21);
@@ -197,8 +184,6 @@
                 document.getElementById('day-full').innerText = fullDaysReal[wdIdx];
                 document.getElementById('val-rayon-sketch').innerText = rayonReal;
                 
-                // SYNCHRONISATION : Le numéro du cycle est le jour du mois persan (jd)
-                // Le nom du cycle est le signe zodiacal correspondant au mois persan (jm)
                 document.getElementById('cycle-name').innerText = zodiacCycles[pDate.m - 1];
                 document.getElementById('cycle-num').innerText = pDate.d;
                 document.getElementById('persian-sync-info').innerText = "Sync. Esfand " + pDate.y;
@@ -211,7 +196,6 @@
                 document.getElementById('val-battement').innerText = String(now.getSeconds()).padStart(2, '0');
             } 
             else {
-                // Plan Fareno (Calculs ésotériques)
                 const n0 = secTotalFanero;
                 const batt = (n0 % 9) + 1;
                 const puls = (Math.floor(n0 / 9) % 9) + 1;
